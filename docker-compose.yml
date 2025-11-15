@@ -1,0 +1,23 @@
+services:
+  app:
+    build:
+      context: .
+      target: runtime
+    ports:
+      - "8080:8080"
+    environment:
+      - JAVA_OPTS=
+    restart: unless-stopped
+    develop:
+      watch:
+        - path: ./src
+          action: rebuild
+        - path: ./pom.xml
+          action: rebuild
+  tests:
+    build:
+      context: .
+      target: test
+    command: ["true"]
+
+
