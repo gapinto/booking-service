@@ -103,14 +103,12 @@ public class BookingService {
 		existing.setStatus(BookingStatus.CANCELED);
 		Booking saved = bookingRepository.save(existing);
 		
-		// Sync to Allocation table
-		var allocations = allocationRepository.findAll();
-		allocations.stream()
-			.filter(a -> a.getEntityId().equals(id) && a.getType() == AllocationType.BOOKING)
-			.forEach(a -> {
-				a.setStatus(AllocationStatus.CANCELED);
-				allocationRepository.save(a);
-			});
+		// Sync to Allocation table (1 query instead of findAll + filter + N saves)
+		allocationRepository.updateStatusByEntityIdAndType(
+			id,
+			AllocationType.BOOKING,
+			AllocationStatus.CANCELED
+		);
 		
 		return saved;
 	}

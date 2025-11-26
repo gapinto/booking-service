@@ -2,6 +2,7 @@ package com.bookingservice.repository;
 
 import com.bookingservice.model.Allocation;
 import com.bookingservice.model.AllocationStatus;
+import com.bookingservice.model.AllocationType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -48,6 +49,14 @@ public interface AllocationRepository extends JpaRepository<Allocation, UUID> {
 	@Modifying
 	@Query("delete from Allocation a where a.entityId = :entityId")
 	void deleteByEntityId(@Param("entityId") UUID entityId);
+
+	@Modifying
+	@Query("update Allocation a set a.status = :status where a.entityId = :entityId and a.type = :type")
+	void updateStatusByEntityIdAndType(
+		@Param("entityId") UUID entityId,
+		@Param("type") AllocationType type,
+		@Param("status") AllocationStatus status
+	);
 }
 
 
